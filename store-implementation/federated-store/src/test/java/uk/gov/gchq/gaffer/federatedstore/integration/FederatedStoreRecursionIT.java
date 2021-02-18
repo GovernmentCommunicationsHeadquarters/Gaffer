@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
@@ -31,6 +32,7 @@ import uk.gov.gchq.gaffer.data.element.Element;
 import uk.gov.gchq.gaffer.data.element.Entity;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStore;
 import uk.gov.gchq.gaffer.federatedstore.FederatedStoreProperties;
+import uk.gov.gchq.gaffer.federatedstore.integration.factory.FederatedStoreGraphFactory;
 import uk.gov.gchq.gaffer.federatedstore.operation.AddGraph;
 import uk.gov.gchq.gaffer.federatedstore.operation.FederatedOperationChain;
 import uk.gov.gchq.gaffer.federatedstore.operation.GetAllGraphIds;
@@ -43,6 +45,7 @@ import uk.gov.gchq.gaffer.operation.impl.add.AddElements;
 import uk.gov.gchq.gaffer.operation.impl.get.GetAllElements;
 import uk.gov.gchq.gaffer.proxystore.ProxyProperties;
 import uk.gov.gchq.gaffer.rest.GafferWebApplication;
+import uk.gov.gchq.gaffer.rest.factory.GraphFactory;
 import uk.gov.gchq.gaffer.store.schema.Schema;
 import uk.gov.gchq.gaffer.store.schema.SchemaEntityDefinition;
 import uk.gov.gchq.gaffer.store.schema.TypeDefinition;
@@ -68,13 +71,21 @@ public class FederatedStoreRecursionIT {
     public static final String PROPERTY_NAME = "count";
     private Graph proxyToRestServiceFederatedGraph;
 
+    @Autowired
+    private GraphFactory graphFactory;
+
     @LocalServerPort
     private int port;
 
     @BeforeEach
     @AfterEach
-    public void clearCache() {
+    public void clearCacheAndResetGraph() {
         CacheServiceLoader.shutdown();
+        if (graphFactory instanceof FederatedStoreGraphFactory) {
+            ((FederatedStoreGraphFactory) graphFactory).reset();
+        } else {
+            throw new RuntimeException("Expected the FederatedStoreGraphFactory Factory to be injected");
+        }
     }
 
     @Test
@@ -206,6 +217,4 @@ public class FederatedStoreRecursionIT {
                 .config(new GraphConfig(PROXY_TO_REST_SERVICE_FEDERATED_GRAPH))
                 .build();
     }
-
-
 }

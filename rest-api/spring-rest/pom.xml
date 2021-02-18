@@ -2,116 +2,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>rest-api</artifactId>
-    <groupId>uk.gov.gchq.gaffer</groupId>
-    <version>1.13.5-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>rest-api</artifactId>
+        <groupId>uk.gov.gchq.gaffer</groupId>
+        <version>1.15.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>spring-rest</artifactId>
+    <artifactId>spring-rest</artifactId>
+    <packaging>pom</packaging>
 
-  <properties>
-    <spring.boot.version>2.4.0</spring.boot.version>
-    <swagger.version>3.0.0</swagger.version>
-    <store.type>map</store.type>
-  </properties>
+    <modules>
+        <module>spring-rest-implementation</module>
+        <module>spring-rest-library</module>
+    </modules>
 
-  <dependencies>
-    <!-- Gaffer dependencies -->
-    <dependency>
-      <groupId>uk.gov.gchq.gaffer</groupId>
-      <artifactId>common-rest</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>uk.gov.gchq.gaffer</groupId>
-      <artifactId>${store.type}-store</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-
-    <!-- external dependencies -->
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>logback-classic</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>log4j-over-slf4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-boot-starter</artifactId>
-      <version>${swagger.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <!-- Test dependencies -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <classifier>exec</classifier>
-          <layout>ZIP</layout>
-          <executable>true</executable>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>repackage</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-  <profiles>
-    <profile>
-      <id>demo</id>
-      <dependencies>
-        <dependency>
-          <groupId>uk.gov.gchq.gaffer</groupId>
-          <artifactId>${store.type}-store</artifactId>
-          <version>${project.parent.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>uk.gov.gchq.gaffer</groupId>
-          <artifactId>jcs-cache-service</artifactId>
-          <version>${project.parent.version}</version>
-        </dependency>
-      </dependencies>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <version>${spring.boot.version}</version>
-            <configuration>
-              <systemPropertyVariables>
-                <gaffer.storeProperties>${project.build.outputDirectory}/${store.type}/store.properties</gaffer.storeProperties>
-                <gaffer.graph.config>${project.build.outputDirectory}/graphConfig.json</gaffer.graph.config>
-                <gaffer.schemas>${project.build.outputDirectory}/schemas</gaffer.schemas>
-              </systemPropertyVariables>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>
